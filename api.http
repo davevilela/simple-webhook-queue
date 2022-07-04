@@ -1,0 +1,17 @@
+GET http://localhost:9181/queue
+
+###
+POST http://localhost:9181/queue
+Content-type: application/json
+X-webhook-signature: 'fake-secret'
+
+{
+  "callbackUrl": "/api/webhooks",
+  "params": "123",
+  "options": {
+    "delay": 5000
+  }
+}
+
+###
+GET http://localhost:9181/tweets
