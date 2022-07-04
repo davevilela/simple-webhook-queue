@@ -12,8 +12,10 @@ import { ConfigService } from './config/config.service';
       imports: [ConfigModule.register({ folder: './config' })],
       useFactory: async (configService: ConfigService) => ({
         redis: {
-          host: configService.get('QUEUE_HOST'),
-          port: +configService.get('QUEUE_PORT'),
+          host: configService.get('REDISHOST'),
+          port: +configService.get('REDISPORT'),
+          username: configService.get('REDISUSER'),
+          password: configService.get('REDISPASSWORD'),
         },
       }),
       inject: [ConfigService],
