@@ -4,9 +4,11 @@ import { QueueController } from './queue.controller';
 import { BullModule } from '@nestjs/bull';
 import { WebhookQueueProcessor } from './queue.processor';
 import { HttpModule } from '@nestjs/axios';
-
+import { ConfigModule } from '@nestjs/config';
+import appConfig from '../../config/app.config';
 @Module({
   imports: [
+    ConfigModule.forFeature(appConfig),
     HttpModule,
     BullModule.registerQueue({
       name: 'webhook',

@@ -1,21 +1,24 @@
 import { BullModule } from '@nestjs/bull';
 import { MiddlewareConsumer, Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { SecureWebhookMiddleware } from './middlewares/SecureWebhookMiddleware';
 import { QueueModule } from './queue/queue.module';
-import { ConfigModule } from './config/config.module';
-import { ConfigService } from './config/config.service';
+import redisConfig from '../config/redis.config';
+import appConfig from 'config/app.config';
 
 @Module({
   imports: [
-    ConfigModule.register({ folder: './config' }),
+    ConfigModule.forRoot({
+      load: [redisConfig, appConfig],
+    }),
     BullModule.forRootAsync({
-      imports: [ConfigModule.register({ folder: './config' })],
+      imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
         redis: {
-          host: configService.get('REDISHOST'),
-          port: +configService.get('REDISPORT'),
-          username: configService.get('REDISUSER'),
-          password: configService.get('REDISPASSWORD'),
+          host: configService.get('redis.host'),
+          port: configService.get('redis.port'),
+          username: configService.get('redis.username'),
+          password: configService.get('redis.password'),
         },
       }),
       inject: [ConfigService],

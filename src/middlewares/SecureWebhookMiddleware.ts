@@ -6,9 +6,9 @@ import {
   NestMiddleware,
   RawBodyRequest,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Request, Response } from 'express';
 import { symmetric } from 'secure-webhooks';
-import { ConfigService } from 'src/config/config.service';
 
 @Injectable()
 export class SecureWebhookMiddleware implements NestMiddleware {

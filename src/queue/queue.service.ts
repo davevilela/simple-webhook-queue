@@ -18,7 +18,10 @@ export class QueueService {
     };
 
     this.logger.log(
-      `Enqueuing job with params: ${JSON.stringify(enqueueParams)}`,
+      `Enqueuing job with params: ${JSON.stringify({
+        enqueueParams,
+        options,
+      })}`,
     );
     return this.queue.add(enqueueParams, {
       ...options,

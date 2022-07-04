@@ -7,6 +7,7 @@ import {
   OnQueueFailed,
 } from '@nestjs/bull';
 import { Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Job } from 'bull';
 import { firstValueFrom } from 'rxjs';
 import { symmetric } from 'secure-webhooks';
@@ -24,7 +25,10 @@ function replaceLocalhostWithDockerHost(_url: string): string {
 export class WebhookQueueProcessor {
   private readonly logger = new Logger(WebhookQueueProcessor.name);
 
-  constructor(private readonly httpService: HttpService) {}
+  constructor(
+    private readonly httpService: HttpService,
+    private config: ConfigService,
+  ) {}
 
   @Process({ concurrency: 2 })
   async handleWebhook(job: Job<EnqueueDto>) {
@@ -32,13 +36,13 @@ export class WebhookQueueProcessor {
       data: { params, callbackUrl },
     } = job;
 
-    const secret = 'fake-secret'; // TODO
+    const secret = this.config.get<string>('app.apiSecret');
 
     const signature = symmetric.sign(params, secret);
 
     const body = JSON.stringify(params);
 
-    const url = replaceLocalhostWithDockerHost(callbackUrl);
+    const url = callbackUrl;
 
     await firstValueFrom(
       this.httpService.post(url, body, {
